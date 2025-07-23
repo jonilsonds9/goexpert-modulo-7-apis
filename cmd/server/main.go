@@ -5,9 +5,11 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth"
 	"github.com/jonilsonds9/goexpert-modulo-7-apis/configs"
+	_ "github.com/jonilsonds9/goexpert-modulo-7-apis/docs"
 	"github.com/jonilsonds9/goexpert-modulo-7-apis/internal/entity"
 	"github.com/jonilsonds9/goexpert-modulo-7-apis/internal/infra/database"
 	"github.com/jonilsonds9/goexpert-modulo-7-apis/internal/infra/webserver/handlers"
+	"github.com/swaggo/http-swagger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"log"
@@ -26,7 +28,7 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:8000
+// @host      http://localhost:8000
 // @BasePath  /
 // @securityDefinitions.apiKey ApiKeyAuth
 // @in header
@@ -65,6 +67,13 @@ func main() {
 
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/generate-token", userHandler.GetJWt)
+
+	r.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/docs/", http.StatusMovedPermanently)
+	})
+	r.Get("/docs/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8000/docs/doc.json"),
+	))
 
 	http.ListenAndServe(":8000", r)
 }
