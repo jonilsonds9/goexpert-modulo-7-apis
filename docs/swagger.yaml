@@ -1,5 +1,20 @@
 basePath: /
-host: http://localhost:8000
+definitions:
+  dto.CreateUserInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8000
 info:
   contact:
     email: jonilson@mail.com
@@ -12,7 +27,31 @@ info:
   termsOfService: http://swagger.io/terms/
   title: GoExpert Modulo 7 APIs
   version: "1.0"
-paths: {}
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: user request
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Create User
+      tags:
+      - users
 securityDefinitions:
   ApiKeyAuth:
     in: header
